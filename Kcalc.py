@@ -34,8 +34,8 @@ dh = pd.read_csv('HeadDiff_Summer16_1DTempPro.csv', sep= ',', header = None )
 #tempData.rename(columns={0: 'date',1:'0m',2:'0.5m',3:'0.1m',4:'0.15m',5:'0.2m',6:'0.3m'}, inplace = True)
 
 #    
-#dh.iloc['date']= pd.to_datetime(dh['date'], format= '%m/%d/%Y %H:%M')
-#
+#dh.['date']= pd.to_datetime(dh['date'], format= '%m/%d/%Y %H:%M')
+#dh = dh.set_index(['date'])
 
     
 #fig = plt.figure(dh[:,0],dh[:,1])
@@ -55,22 +55,42 @@ PZO['DivTotHead'] = PZO['DivTotHead'].apply(lambda x:x/100) #convert cm to m
 
     
 PZO['DivDateTime']= pd.to_datetime(PZO['DivDateTime'], format='%Y/%m/%d %H:%M:%S')
+PZO = PZO.set_index(['DivDateTime'])
 
-PZO.resample('1d').sum()
-#need to bin the PZ data into days
-
+PZO = PZO.resample('1d').sum()  #bin the PZ data by day
+PZO['DivTotHead'] = PZO['DivTotHead'].apply(lambda x:x/(24*4)) #make each bin an average of the head measurment for that day 
 
 
 #import rain data
-#RainGauge = pd.read_csv('Weather_EmbarrassMN_151017_161005.csv', sep= ',' )
-#print RainGauge
-
-#m = missing
-#t = trace
-#need to bin the PZ data into days
-#need to line up PZ and rain data, throw out M and T days
-#rain and pz-o correlation
+RainGauge = pd.read_csv('Weather_EmbarrassMN_151017_161005.csv', sep= ',' )
+RainGauge['Date']= pd.to_datetime(RainGauge['Date'], format='%m/%d/%Y')
+RainGauge = RainGauge.set_index(['Date'])
 
 
 
+#throw out m and t dats
+RainGauge = RainGauge[RainGauge.PRCP !='M' ]
+RainGauge = RainGauge[RainGauge.PRCP !='T' ]
+
+#put 2 data frames together
+RPZ = pd.concat([PZO, RainGauge], axis =1)
+#Throw out all Nan, including places where there issn't PZ data
+RPZ = RPZ[pd.notnull(RPZ['PRCP'])]
+RPZ = RPZ[pd.notnull(RPZ['DivTotHead'])]
+#Throw out first and last day where there is not a full 24 hr record
+RPZ = RPZ.drop([RPZ.first_valid_index()])
+RPZ = RPZ.drop([RPZ.last_valid_index()])
+          
+          
+#plot PZ head as fxn of rainfall
+
+plt.xlabel('Rainfall, UNIT ')
+plt.ylabel('Head, m')
+plt.title('Testplot')
+plt.plot(RPZ.PRCP, RPZ.DivTotHead, 'ro')
+
+##rain and pz-o correlation
+
+
+#figure out how to do y axis as one day later
 
