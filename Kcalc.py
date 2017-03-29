@@ -4,6 +4,7 @@ Created on Thu Mar 23 20:08:16 2017
 
 @author: Jack
 """
+import scipy.io
 import numpy as np
 import pandas as pd
 from datetime import datetime 
@@ -28,16 +29,48 @@ dh = pd.read_csv('HeadDiff_Summer16_1DTempPro.csv', sep= ',', header = None )
 #    q= float(raw_input("enter average q\n"))
 
     
-#match up dates in q and dh time series
-dh.rename(columns={0: 'date', 1: 'deltah'}, inplace = True)
-tempData.rename(columns={0: 'date',1:'0m',2:'0.5m',3:'0.1m',4:'0.15m',5:'0.2m',6:'0.3m'}, inplace = True)
-for row in range(0, dh.shape[0]):
-    
-    dh.iloc[row, 0]= datetime.strptime(dh.iloc[row,0], '%m/%d/%Y %H:%M')
+##match up dates in q and dh time series
+#dh.rename(columns={0: 'date', 1: 'deltah'}, inplace = True)
+#tempData.rename(columns={0: 'date',1:'0m',2:'0.5m',3:'0.1m',4:'0.15m',5:'0.2m',6:'0.3m'}, inplace = True)
 
+#    
+#dh.iloc['date']= pd.to_datetime(dh['date'], format= '%m/%d/%Y %H:%M')
+#
 
     
 #fig = plt.figure(dh[:,0],dh[:,1])
-plt.plot(dh.date, dh.deltah)
-#calculate k/ds
+#fig = plt.figure(figsize=(8,12))
+#dhSeries = fig.add_subplot(1,1,1)
+#dhSeries.plot(dh.date, dh.deltah)
+##calculate k/ds
 #convert k/ds to k that will be used by 1d temp pro
+
+PZO = scipy.io.loadmat('PZ-Out_161005_Calib20161001_1545_results.mat') #load matlab data
+DivTotHead=  PZO['DivTotHead'].reshape(PZO['DivTotHead'].size)  #make array 1 dimensional
+
+
+#import PZ data
+PZO = pd.DataFrame({'DivDateTime':PZO[ 'DivDateTime' ] , 'DivTotHead':DivTotHead})#Turn matlab data into pd dataframe
+PZO['DivTotHead'] = PZO['DivTotHead'].apply(lambda x:x/100) #convert cm to m
+
+    
+PZO['DivDateTime']= pd.to_datetime(PZO['DivDateTime'], format='%Y/%m/%d %H:%M:%S')
+
+PZO.resample('1d').sum()
+#need to bin the PZ data into days
+
+
+
+#import rain data
+#RainGauge = pd.read_csv('Weather_EmbarrassMN_151017_161005.csv', sep= ',' )
+#print RainGauge
+
+#m = missing
+#t = trace
+#need to bin the PZ data into days
+#need to line up PZ and rain data, throw out M and T days
+#rain and pz-o correlation
+
+
+
+
