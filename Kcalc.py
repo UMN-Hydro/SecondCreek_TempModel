@@ -80,17 +80,30 @@ RPZ = RPZ[pd.notnull(RPZ['DivTotHead'])]
 #Throw out first and last day where there is not a full 24 hr record
 RPZ = RPZ.drop([RPZ.first_valid_index()])
 RPZ = RPZ.drop([RPZ.last_valid_index()])
-          
-          
-#plot PZ head as fxn of rainfall
+         
 
+#plot PZ head as fxn of rainfall
+plt.figure(1)
 plt.xlabel('Rainfall, UNIT ')
 plt.ylabel('Head, m')
-plt.title('Testplot')
+plt.title('day incriment = 0')
 plt.plot(RPZ.PRCP, RPZ.DivTotHead, 'ro')
 
 ##rain and pz-o correlation
 
 
-#figure out how to do y axis as one day later
 
+
+#below increases all dates by one
+PZO.index = PZO.index +pd.DateOffset(1)
+RPZ = RPZ = pd.concat([PZO, RainGauge], axis =1)
+RPZ = RPZ[pd.notnull(RPZ['PRCP'])]
+RPZ = RPZ[pd.notnull(RPZ['DivTotHead'])]
+RPZ = RPZ.drop([RPZ.first_valid_index()])
+RPZ = RPZ.drop([RPZ.last_valid_index()])
+
+plt.figure(2)
+plt.xlabel('Rainfall, UNIT ')
+plt.ylabel('Head, m')
+plt.title('day incriment = 1')
+plt.plot(RPZ.PRCP, RPZ.DivTotHead, 'ro')
