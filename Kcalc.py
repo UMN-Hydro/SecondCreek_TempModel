@@ -72,38 +72,37 @@ RainGauge = RainGauge.set_index(['Date'])
 RainGauge = RainGauge[RainGauge.PRCP !='M' ]
 RainGauge = RainGauge[RainGauge.PRCP !='T' ]
 
-#put 2 data frames together
-RPZ = pd.concat([PZO, RainGauge], axis =1)
-#Throw out all Nan, including places where there issn't PZ data
-RPZ = RPZ[pd.notnull(RPZ['PRCP'])]
-RPZ = RPZ[pd.notnull(RPZ['DivTotHead'])]
-#Throw out first and last day where there is not a full 24 hr record
-RPZ = RPZ.drop([RPZ.first_valid_index()])
-RPZ = RPZ.drop([RPZ.last_valid_index()])
-         
-
-#plot PZ head as fxn of rainfall
-plt.figure(1)
-plt.xlabel('Rainfall, UNIT ')
-plt.ylabel('Head, m')
-plt.title('day incriment = 0')
-plt.plot(RPZ.PRCP, RPZ.DivTotHead, 'ro')
-
-##rain and pz-o correlation
 
 
 
 
-#below increases all dates by one
-PZO.index = PZO.index +pd.DateOffset(1)
-RPZ = RPZ = pd.concat([PZO, RainGauge], axis =1)
-RPZ = RPZ[pd.notnull(RPZ['PRCP'])]
-RPZ = RPZ[pd.notnull(RPZ['DivTotHead'])]
-RPZ = RPZ.drop([RPZ.first_valid_index()])
-RPZ = RPZ.drop([RPZ.last_valid_index()])
 
-plt.figure(2)
-plt.xlabel('Rainfall, UNIT ')
-plt.ylabel('Head, m')
-plt.title('day incriment = 1')
-plt.plot(RPZ.PRCP, RPZ.DivTotHead, 'ro')
+
+
+
+
+for i in range(0,15):
+    
+
+    PZO.index = PZO.index +pd.DateOffset(days = i)  #Date offset controlled by i
+    print PZO.first_valid_index()
+    RPZ = RPZ = pd.concat([PZO, RainGauge], axis =1) #put raing gauge and PZ data together
+    print RPZ.shape[0]
+    RPZ = RPZ[pd.notnull(RPZ['PRCP'])] #remove all Nan
+    RPZ = RPZ[pd.notnull(RPZ['DivTotHead'])] #remove all Nan
+    RPZ = RPZ.drop([RPZ.first_valid_index()]) #Remove first (incomplete) day
+    RPZ = RPZ.drop([RPZ.last_valid_index()]) #remove last (incomplete) day
+    RPZ = RPZ[RPZ.PRCP != '0'] #remove days without rainfall
+    plt.figure(i)
+    plt.xlabel('Rainfall, Inches')
+    plt.ylabel('Head, m')
+    plt.title('day incriment = %d' % i)
+    plt.plot(RPZ.PRCP, RPZ.DivTotHead, 'ro')
+
+
+
+
+#to do:
+    #drop the days with zero rainfall
+    #fit a regression line
+    #iterate thru various offsets to find best fit to regression
