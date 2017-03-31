@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime 
 from matplotlib import pyplot as plt
+import statsmodels.api as sm
 # Script to read average q output from 1DTempProbePro, and use deltaH time series to calculate average K
 #read in deltah timeseries
 dh = pd.read_csv('HeadDiff_Summer16_1DTempPro.csv', sep= ',', header = None )
@@ -71,6 +72,9 @@ RainGauge = RainGauge.set_index(['Date'])
 #throw out m and t dats
 RainGauge = RainGauge[RainGauge.PRCP !='M' ]
 RainGauge = RainGauge[RainGauge.PRCP !='T' ]
+#turn strings into floats
+RainGauge['PRCP'] =pd.to_numeric(RainGauge['PRCP'])
+PZO['DivTotHead']= pd.to_numeric(PZO['DivTotHead'])
 
 
 
@@ -78,31 +82,37 @@ RainGauge = RainGauge[RainGauge.PRCP !='T' ]
 
 
 
-
-
-
+#
 for i in range(0,15):
     
 
-    PZO.index = PZO.index +pd.DateOffset(days = i)  #Date offset controlled by i
-    print PZO.first_valid_index()
+    PZO.index = PZO.index +pd.DateOffset(days = 1)  #Incriment the begining date by one day
+
     RPZ = RPZ = pd.concat([PZO, RainGauge], axis =1) #put raing gauge and PZ data together
-    print RPZ.shape[0]
+ 
     RPZ = RPZ[pd.notnull(RPZ['PRCP'])] #remove all Nan
     RPZ = RPZ[pd.notnull(RPZ['DivTotHead'])] #remove all Nan
     RPZ = RPZ.drop([RPZ.first_valid_index()]) #Remove first (incomplete) day
     RPZ = RPZ.drop([RPZ.last_valid_index()]) #remove last (incomplete) day
-    RPZ = RPZ[RPZ.PRCP != '0'] #remove days without rainfall
-    plt.figure(i)
+    RPZ = RPZ[RPZ.PRCP != 0] #remove days without rainfall
+    fig = plt.figure(i)
+    graph = fig.add_subplot(1,1,1)
+    graph.plot(RPZ.PRCP, RPZ.DivTotHead, 'ro')
+  
     plt.xlabel('Rainfall, Inches')
     plt.ylabel('Head, m')
     plt.title('day incriment = %d' % i)
-    plt.plot(RPZ.PRCP, RPZ.DivTotHead, 'ro')
+#    plt.plot(RPZ.PRCP, RPZ.DivTotHead, 'ro')
 
+    X = RPZ['PRCP']
 
+    X = sm.add_constant(X)
 
+    fit = sm.OLS(RPZ['DivTotHead'],X).fit()
 
+    graph.plot(RPZ.PRCP, fit.params.values[1]*RPZ.DivTotHead + fit.params.values[0], 'k-', linewidth = 2)
+ 
 #to do:
-    #drop the days with zero rainfall
+
     #fit a regression line
     #iterate thru various offsets to find best fit to regression
