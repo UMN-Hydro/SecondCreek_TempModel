@@ -94,7 +94,7 @@ for i in range(0,15):
     RPZ = RPZ[pd.notnull(RPZ['DivTotHead'])] #remove all Nan
     RPZ = RPZ.drop([RPZ.first_valid_index()]) #Remove first (incomplete) day
     RPZ = RPZ.drop([RPZ.last_valid_index()]) #remove last (incomplete) day
-    RPZ = RPZ[RPZ.PRCP != 0] #remove days without rainfall
+    RPZ = RPZ[RPZ.PRCP >= 0] #remove days without rainfall
     fig = plt.figure(i)
     graph = fig.add_subplot(1,1,1)
     graph.plot(RPZ.PRCP, RPZ.DivTotHead, 'ro')
@@ -110,9 +110,8 @@ for i in range(0,15):
 
     fit = sm.OLS(RPZ['DivTotHead'],X).fit()
 
-    graph.plot(RPZ.PRCP, fit.params.values[1]*RPZ.DivTotHead + fit.params.values[0], 'k-', linewidth = 2)
+    graph.plot(RPZ['PRCP'],( RPZ['PRCP']*fit.params.values[1]) + fit.params.values[0], 'k-', linewidth = 2)
  
 #to do:
 
-    #fit a regression line
-    #iterate thru various offsets to find best fit to regression
+#finish K calculation
