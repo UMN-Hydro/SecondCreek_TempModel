@@ -68,8 +68,8 @@ print k2overds *ds2
 dh1['deltah'] = dh1['deltah'] * .3/ds1
 dh2['deltah'] = dh2['deltah'] * .3/ds2 
 
-dh1.to_csv('scaleddh1.csv')
-dh2.to_csv('scaleddh2.csv')
+dh1.to_csv('scaleddh1.csv',date_format='%m/%d/%Y %H:%M', header = False)
+dh2.to_csv('scaleddh2.csv',date_format='%m/%d/%Y %H:%M', header = False)
 
 #
 #Below: plots head vs rain at various time delays
