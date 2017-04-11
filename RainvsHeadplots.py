@@ -57,7 +57,7 @@ PZO['DivTotHead']= pd.to_numeric(PZO['DivTotHead'])
 #create maxOffset number of plots. Plots are head vs rainfall. When i = 0 head data and rain data are taken from the same day. When i = 1 head data is taken from the 
 #day after the rain event. When I = 2 head data is taken from 2 days after the rain event. Days of zero rainfall are not plotted. 
 #a linear trend line is fit on each plot. 
-
+fig = plt.figure()
 maxOffset=5
 for i in range(0,maxOffset):
 #    
@@ -71,8 +71,8 @@ for i in range(0,maxOffset):
     RPZ = RPZ.drop([RPZ.first_valid_index()]) #Remove first (incomplete) day
     RPZ = RPZ.drop([RPZ.last_valid_index()]) #remove last (incomplete) day
     RPZ = RPZ[RPZ.PRCP > 0] #remove days without rainfall
-    fig = plt.figure(i)
-    graph = fig.add_subplot(1,1,1)
+    
+    graph = fig.add_subplot(1,maxOffset,i+1)
     graph.plot(RPZ.PRCP, RPZ.DivTotHead, 'ro')
 #  
     plt.xlabel('Rainfall, Inches')
@@ -85,3 +85,4 @@ for i in range(0,maxOffset):
     fit = sm.OLS(RPZ['DivTotHead'],X).fit()
     graph.plot(RPZ['PRCP'],( RPZ['PRCP']*fit.params.values[1]) + fit.params.values[0], 'k-', linewidth = 2)
 # 
+plt.show()
