@@ -15,7 +15,6 @@ import statsmodels.api as sm
 #
 PZO = scipy.io.loadmat('PZ-Out_161005_Calib20161001_1545_results.mat') #load head data from matlab file 
 DivTotHead=  PZO['DivTotHead'].reshape(PZO['DivTotHead'].size)  #make array 1 dimensional
-
 #
 PZO = pd.DataFrame({'DivDateTime':PZO[ 'DivDateTime' ] , 'DivTotHead':DivTotHead})#Turn matlab data into pd dataframe
 PZO['DivTotHead'] = PZO['DivTotHead'].apply(lambda x:x/100) #convert cm to m
@@ -75,9 +74,6 @@ for i in range(0,maxOffset):
     graph = fig.add_subplot(1,maxOffset,i+1)
     graph.plot(RPZ.PRCP, RPZ.DivTotHead, 'ro')
 #  
-    plt.xlabel('Rainfall, Inches')
-    plt.ylabel('Head, m')
-    plt.title('day incriment = %d' % i)
     
     #Fit, plot trendline
     X = RPZ['PRCP']
@@ -86,3 +82,6 @@ for i in range(0,maxOffset):
     graph.plot(RPZ['PRCP'],( RPZ['PRCP']*fit.params.values[1]) + fit.params.values[0], 'k-', linewidth = 2)
 # 
 plt.show()
+
+
+#to do: stability analysis, give plots names

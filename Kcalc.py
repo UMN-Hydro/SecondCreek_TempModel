@@ -1,6 +1,7 @@
 
 import numpy as np
 import pandas as pd
+from matplotlib import pyplot as plt
 
 
 
@@ -17,8 +18,8 @@ q2= -.045143 #modeled average flux from 1dtempro
 
 #read in head difference timeseries
 
-dh1 =pd.read_csv('HeadDiff1_1DTempPro.csv', sep= ',', header = None ) #first half of summer
-dh2= pd.read_csv('HeadDiff2_1DTempPro.csv', sep= ',', header = None ) #second half of summer
+dh1 =pd.read_csv('HeadDiff1_PZCWSG.csv', sep= ',', header = None ) #first half of summer
+dh2= pd.read_csv('HeadDiff2_PZCWSG.csv', sep= ',', header = None ) #second half of summer
 
 #rename colums for ease of use
 
@@ -35,6 +36,12 @@ dh1 = dh1.set_index(['date'])
 dh2['date']= pd.to_datetime(dh2['date'], format= '%m/%d/%Y %H:%M')
 dh2 = dh2.set_index(['date'])
 
+plt.plot(dh1)
+plt.plot(dh2, color ='b')
+plt.xlabel('Date')
+plt.ylabel('Head difference, m')
+plt.title('Head difference, PZCW-SG')
+plt.show()
 
 
 #calculate k/ds from q = dh* k/ ds 
@@ -44,8 +51,8 @@ dh2 = dh2.set_index(['date'])
 k1overds= -dh1['deltah'].mean() / q1
 k2overds= -dh2['deltah'].mean() / q2
 
-ds1 = 429.558 - 429.092 #distance from sg1 to PZCC (vertical distance between measurment devices, surveyed)
-ds2 = 429.558 - 428.818 #distance from sg2 to PZCC
+ds1 = 429.212 - 429.092 #distance from sg1 to PZCC (vertical distance between measurment devices, surveyed)
+ds2 = 429.212 - 428.818 #distance from sg2 to PZCC
 
 #calculate hydraulic conductivity
 k1= k1overds *ds1
@@ -65,8 +72,8 @@ dh1.to_csv('scaleddh1.csv',sep =',',date_format='%m/%d/%Y %H:%M', header = False
 dh2.to_csv('scaleddh2.csv',sep =',',date_format='%m/%d/%Y %H:%M', header = False)
 dh1temp = np.loadtxt('scaleddh1.csv', dtype =str , delimiter = ',')
 dh2temp = np.loadtxt('scaleddh2.csv', dtype =str, delimiter = ',')
-np.savetxt('scaleddh1.csv',dh1temp,fmt= '%s', delimiter = ', ')
-np.savetxt('scaleddh2.csv',dh2temp,fmt = '%s', delimiter = ', ')
+np.savetxt('scaleddh1CW.csv',dh1temp,fmt= '%s', delimiter = ', ')
+np.savetxt('scaleddh2CW.csv',dh2temp,fmt = '%s', delimiter = ', ')
 #
 
 
