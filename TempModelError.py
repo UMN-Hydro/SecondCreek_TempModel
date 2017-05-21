@@ -8,9 +8,9 @@ Created on Sat Apr 22 10:08:20 2017
 import pandas as pd
 from matplotlib import pyplot as plt
 import numpy as np
-TPrun = 35
+TPrun = 2
 #read in model output, data
-data =pd.read_csv('Archive\VS2DH_Archive_%d\MeasuredData.csv' % TPrun, sep= ',', header = None ) #import csv data
+data =pd.read_csv('Temp_data\Archive\VS2DH_Archive_%d\MeasuredData.csv' % TPrun, sep= ',', header = None ) #import csv data
 data[0] = pd.to_datetime(data[0], format='%m/%d/%Y %H:%M') #turn dates into datetime objects, use dates as the index
 data = data.set_index(data[0])
 data.rename(columns={ 1: '1data', 2:'2data', 3:'3data', 4:'4data', 5:'5data',6:'6data'}, inplace = True) #rename columns for convineince

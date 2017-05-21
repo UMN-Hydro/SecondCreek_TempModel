@@ -1,0 +1,18 @@
+inputs:
+TPA1
+q= -0.0048099 m/d    
+rms = 0.087    --low density params
+TPA2
+q= -0.0072581 m/d
+rms = 0.083  =low density params
+
+
+tpb
+q= -0.0215 m/d
+rms = 0.115 --low density params
+
+
+
+TPC rerun with parameters indicative of smaller sediment
+q= -0.014 m/d
+rms = 0.25

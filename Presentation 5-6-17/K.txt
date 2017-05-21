@@ -1,0 +1,15 @@
+TPA 1 run 15
+0.0088 m/d
+rms = 0.148
+TPA 2 run 16
+0.034m/d
+rms= 0.13
+
+TPB run 14
+0.079 m/d
+rms = 0.113
+
+
+TPC run 17
+0.05 m/d
+rms = 0.14

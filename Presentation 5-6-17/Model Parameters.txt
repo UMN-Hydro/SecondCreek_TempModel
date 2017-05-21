@@ -1,0 +1,6 @@
+ESTIMATE q:
+K=n/a
+Porosity = 0.6
+Thermal Conductivity = 0.8 W/(m*C)   - a  value for sparse saturated fine grain sed
+sed heat capacity = 3.5 * 10^6 J/(m^3 * C) - middle value for sparse grain sed (could both be improved with dry bulk density measurment)
+disp = 0.01
